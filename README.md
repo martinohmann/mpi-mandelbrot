@@ -64,11 +64,11 @@ Shifted, zoomed in, increased iteration count and custom min-color value
 
     mpirun -np 4 ./mandelbrot -n 30000 -x -1 -y -1 -a 1 -p 0x0099ff
 
-The "head". Custom min-color value and filted blue part
+The "head" of the mandelbrot "thing": Custom min-color value and filtered blue part
 
     mpirun -np 4 ./mandelbrot -n 5000 -a 0.5 -x -1 -p 0xbb9955 -m 0xffff00
     
     
-With progress bar on master
+Show progress bar on master
 
 	mpirun -np 4 ./mandelbrot -n 100000 -s
