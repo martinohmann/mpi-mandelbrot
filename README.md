@@ -31,3 +31,44 @@ Usage
 	    -q {hexnum}          Maximum color of the resulting image. (default: 0xffffff)
 	    -m {hexnum}          Hex mask to manipulate color ranges. (default: 0xffffff)
 	    -s                   Print progress of the computation.
+
+Usage examples
+--------------
+
+Zoomed out
+
+    mpirun -np 4 ./mandelbrot -n 20000 -a 3.5
+
+
+Inverted axis and blocksize 8
+
+    mpirun -np 4 ./mandelbrot -n 5000 -b 8 -a -2
+
+
+Shift and zoom
+
+    mpirun -np 4 ./mandelbrot -n 10000 -x -1 -y -1 -a 1
+
+
+Inverted colors and custom output file
+
+    mpirun -np 4 ./mandelbrot -n 10000 -p 0xffffff -q 0x000000 -o ./output.bmp
+
+
+Inverted color with color mask
+
+    mpirun -np 4 ./mandelbrot -n 10000 -p 0xffffff -q 0x000000 -m 0x00bb00
+
+
+Shifted, zoomed in, increased iteration count and custom min-color value 
+
+    mpirun -np 4 ./mandelbrot -n 30000 -x -1 -y -1 -a 1 -p 0x0099ff
+
+The "head". Custom min-color value and filted blue part
+
+    mpirun -np 4 ./mandelbrot -n 5000 -a 0.5 -x -1 -p 0xbb9955 -m 0xffff00
+    
+    
+With progress bar on master
+
+	mpirun -np 4 ./mandelbrot -n 100000 -s
