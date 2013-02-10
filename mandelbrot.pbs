@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Name des Jobs
+#PBS -N mandelbrot
+
+# Output und Error in eine Datei schreiben
+#PBS -j oe
+
+# Job ist nicht wiederholbar
+#PBS -r n
+
+# Email verschicken, wenn Job (a)bricht, (b)eginnt und/oder (e)ndet
+##PBS -m ae
+##PBS -M ohmann@uni-potsdam.de
+
+# Ressourcen Beschreibung
+#PBS -l walltime=00:30:00
+#PBS -l nodes=4:ppn=1
+
+# Arbeitsverzeichnis wechseln
+cd $PBS_O_WORKDIR
+
+# Programm, das gestartet werden soll:
+/cvos/shared/apps/mpich2/ge/gcc/64/1.3.1/bin/mpirun -np 4 -machinefile $PBS_NODEFILE /home/ohmann/mandelbrot/mandelbrot -n 10000 -x -1 -y -1 -a 0.8 -p 0x555555
