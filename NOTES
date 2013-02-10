@@ -1,0 +1,63 @@
+Dynamisches Mandelbrot MPI Programm mit variabler Blockgröße
+============================================================
+
+Gruppe: 
+    Martin Ohmann <ohmann@uni-potsdam.de>
+    Matrikelnummer 734801
+
+
+Das Programm hat diverse Einstellmöglichkeiten, welche mittels 
+der '-h'-Option angezeigt werden können:
+
+    mpirun -np 4 ./mandelbrot -h
+
+
+Ein Makefile zum Kompilieren liegt bei. Ein paar vorab generierte 
+Beispiel-Bitmaps befinden sich im Unterordner './bitmaps/'.
+
+
+Ein paar Beispiele zum selbst testen:
+-------------------------------------
+
+Rausgezoomt:
+
+    mpirun -np 4 ./mandelbrot -n 20000 -a 3.5
+
+
+Invertierte Achsen und Blocksize 8:
+
+    mpirun -np 4 ./mandelbrot -n 5000 -b 8 -a -2
+
+
+Verschieben und Reinzoomen:
+
+    mpirun -np 4 ./mandelbrot -n 10000 -x -1 -y -1 -a 1
+
+
+Invertierte Farben und benutzerdefiniertes Ausgabefile:
+
+    mpirun -np 4 ./mandelbrot -n 10000 -p 0xffffff -q 0x000000 -o ./output.bmp
+
+
+Invertierte Farben mit Farbtonmaske:
+
+    mpirun -np 4 ./mandelbrot -n 10000 -p 0xffffff -q 0x000000 -m 0x00bb00
+
+
+Verschieben und Reinzoomen mit höherer Anzahl an Durchläufen und 
+anderem Farbstartwert:
+
+    mpirun -np 4 ./mandelbrot -n 30000 -x -1 -y -1 -a 1 -p 0x0099ff
+
+
+Der "Kopf" der Apfelmännchens mit anderem Farbstartwert und 
+weggefilterten Blauanteilen:
+
+    mpirun -np 4 ./mandelbrot -n 5000 -a 0.5 -x -1 -p 0xbb9955 -m 0xffff00
+    
+    
+Mit Fortschrittsanzeige auf dem Master:
+
+	mpirun -np 4 ./mandelbrot -n 100000 -s
+
+
