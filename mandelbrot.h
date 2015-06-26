@@ -1,7 +1,19 @@
 /*
- * Headers for dynamic MPI Mandelbrot algorithm
+ * Dynamic MPI Mandelbrot algorithm
+ * Copyright (C) 2015  Martin Ohmann <martin@mohmann.de>
  *
- * @author Martin Ohmann <ohmann@uni-potsdam.de>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef _MO_MANDELBROT_H
 #define _MO_MANDELBROT_H
@@ -52,16 +64,16 @@
 /* 
  * structdef for complex numbers 
  */
-struct mo_complex 
+typedef struct _mo_complex
 {
     double re;                  /* real part */
     double im;                  /* imaginary part */
-};
+} mo_complex_t;
 
 /* 
  * stuctdef for core options 
  */
-struct mo_opts 
+typedef struct _mo_opts
 {
     int width, height;          /* image width/height */
     char *filename;             /* filename of resulting bitmap */
@@ -72,22 +84,22 @@ struct mo_opts
     long min_color, max_color;  /* color ranges */
     long color_mask;            /* color mask */
     int show_progress;          /* if 1, show progress */
-};
+} mo_opts_t;
 
 /*
  * structdef for scaling
  */
-struct mo_scale
+typedef struct _mo_scale
 {
     double color, im, re;       /* scalings of color, imaginary and 
                                    real part for computation */
-};
+} mo_scale_t;
 
 /*
  * structdef for bmp header
  * derived from http://cpansearch.perl.org/src/DHUNT/PDL-Planet-0.05/libimage/bmp.c
  */
-struct mo_bmp_header
+typedef struct _mo_bmp_header
 {
     char type[2];               /* "BM" */
     int fsize;                  /* Size of file in bytes */
@@ -106,17 +118,17 @@ struct mo_bmp_header
                                    maximum allowed by bit_count) */
     int clr_important;          /* Number of important colors. If 0, all colors 
                                    are important */
-};
+} mo_bmp_header_t;
 
 /* 
  * method prototypes 
  */
-static int parse_args(int, char **, struct mo_opts *, int, int);
-static void print_params(struct mo_opts *, double, double, double);
+static int parse_args(int, char **, mo_opts_t *, int, int);
+static void print_params(mo_opts_t *, double, double, double);
 static void print_usage(char **);
-static int master_proc(int, struct mo_opts *);
-static int slave_proc(int, struct mo_opts *);
-static long mandelbrot(int, int, struct mo_scale *, struct mo_opts *);
+static int master_proc(int, mo_opts_t *);
+static int slave_proc(int, mo_opts_t *);
+static long mandelbrot(int, int, mo_scale_t *, mo_opts_t *);
 static inline void print_progress(int, int);
 static int write_bitmap(const char *, int, int, char *);
 

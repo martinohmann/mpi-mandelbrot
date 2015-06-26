@@ -1,7 +1,19 @@
 /*
  * Dynamic MPI Mandelbrot algorithm
+ * Copyright (C) 2015  Martin Ohmann <martin@mohmann.de>
  *
- * @author Martin Ohmann <ohmann@uni-potsdam.de>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mandelbrot.h"
 
@@ -11,7 +23,7 @@
 int main(int argc, char **argv) 
 {
     int proc_count, proc_id, retval;
-    struct mo_opts *opts;
+    mo_opts_t *opts;
 
     /* initialize MPI */
     if (MPI_Init(&argc, &argv) != MPI_SUCCESS) {
@@ -30,14 +42,14 @@ int main(int argc, char **argv)
     /* get current process id */
     MPI_Comm_rank(MPI_COMM_WORLD, &proc_id);
 
-    opts = (struct mo_opts *) malloc(sizeof(*opts));
+    opts = (mo_opts_t *) malloc(sizeof(*opts));
 
     if (opts == NULL) {
         eprintf("unable to allocate memory for config.\n");
         finalize_exit(EXIT_FAILURE);
     }
 
-    /* parse args and store them in opts struct */
+    /* parse args and store them in opts */
     retval = parse_args(argc, argv, opts, proc_id, proc_count);
     
     if (retval == EXIT_SUCCESS) {
@@ -56,9 +68,9 @@ int main(int argc, char **argv)
 }
 
 /*
- * parse CLI args and store them into opts struct
+ * parse CLI args and store them into opts 
  */
-static int parse_args(int argc, char **argv, struct mo_opts *opts, int proc_id, int proc_count) 
+static int parse_args(int argc, char **argv, mo_opts_t *opts, int proc_id, int proc_count) 
 {
     /* set default values first */
     opts->max_iterations = MO_MAXITER;
@@ -149,7 +161,7 @@ static int parse_args(int argc, char **argv, struct mo_opts *opts, int proc_id, 
             case '?': /* unknown opt */
                 if (proc_id == 0) {
                     /* hacky fix: get correct index if length of invalid option is > 2 */
-                    index = (strncmp(argv[0], argv[optind - 1], sizeof(argv[0])) == 0) 
+                    index = (strncmp(argv[0], argv[optind - 1], sizeof(argv)) == 0) 
                         ? optind 
                         : optind-1;
 
@@ -202,7 +214,7 @@ static int parse_args(int argc, char **argv, struct mo_opts *opts, int proc_id, 
 /*
  * display parameters used for computation
  */
-static void print_params(struct mo_opts *opts, double x_off, double y_off, double axis_length)
+static void print_params(mo_opts_t *opts, double x_off, double y_off, double axis_length)
 {
     printf("Computation parameters:\n" \
         "    output file              %s\n" \
@@ -259,7 +271,7 @@ static void print_usage(char **argv)
 /*
  * master process logic
  */
-static int master_proc(int slave_count, struct mo_opts *opts) 
+static int master_proc(int slave_count, mo_opts_t *opts) 
 {
     int *rows = (int *) malloc(opts->blocksize*sizeof(*rows));
     long *data = (long *) malloc((opts->width + 1)*opts->blocksize*sizeof(*data));
@@ -363,11 +375,11 @@ static int master_proc(int slave_count, struct mo_opts *opts)
 /*
  * slave process logic
  */
-static int slave_proc(int proc_id, struct mo_opts *opts) 
+static int slave_proc(int proc_id, mo_opts_t *opts) 
 {
     int *rows = (int *) malloc(opts->blocksize*sizeof(*rows));
     long *data = (long *) malloc((opts->width + 1)*opts->blocksize*sizeof(*data));
-    struct mo_scale *scale = (struct mo_scale *) malloc(sizeof(*scale));
+    mo_scale_t *scale = (mo_scale_t *) malloc(sizeof(*scale));
     
     if (rows == NULL || data == NULL || scale == NULL) {
         free(rows); free(data); free(scale);
@@ -415,9 +427,9 @@ static int slave_proc(int proc_id, struct mo_opts *opts)
 /*
  * compute pixel color using the mandelbrot algorithm
  */
-static long mandelbrot(int col, int row, struct mo_scale *scale, struct mo_opts *opts) 
+static long mandelbrot(int col, int row, mo_scale_t *scale, mo_opts_t *opts) 
 {
-    struct mo_complex a, b;
+    mo_complex_t a, b;
     a.re = a.im = 0;
 
     /* scale display coordinates to actual region */
@@ -449,7 +461,7 @@ static inline void print_progress(int rows_processed, int row_count)
     
     /* only update MO_PUPDATE times */
     if (r == 0 || rows_processed % r != 0) return;
- 
+
     /* calulate ratio and current position */
     float ratio = rows_processed/(float) row_count;
     int pos = ratio*MO_PWIDTH;
@@ -467,7 +479,6 @@ static inline void print_progress(int rows_processed, int row_count)
 /*
  * write bitmap file
  * derived from http://cpansearch.perl.org/src/DHUNT/PDL-Planet-0.05/libimage/bmp.c
- * and slightly modified
  */
 static int write_bitmap(const char *filename, int width, int height, char *rgb)
 {
@@ -476,7 +487,7 @@ static int write_bitmap(const char *filename, int width, int height, char *rgb)
     unsigned char *line;
 
     FILE *file;
-    struct mo_bmp_header bmph;
+    mo_bmp_header_t bmph;
 
     /* the length of each line must be a multiple of 4 bytes */
     bytes_per_line = (3*(width + 1)/4)*4;
